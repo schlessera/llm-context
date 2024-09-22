@@ -25,8 +25,7 @@ jobs:
 
     - name: Run check.sh
       run: |
-        chmod +x ./scripts/check.sh
-        ./scripts/check.sh -f gcc | while IFS= read -r line; do
+        sh ./scripts/check.sh -f gcc | while IFS= read -r line; do
           file=$(echo "$line" | cut -d':' -f1)
           linenum=$(echo "$line" | cut -d':' -f2)
           colnum=$(echo "$line" | cut -d':' -f3)

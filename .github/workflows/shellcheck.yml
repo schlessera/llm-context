@@ -25,13 +25,30 @@ jobs:
 
     - name: Run check.sh
       run: |
-        sh ./scripts/check.sh -f checkstyle
+        chmod +x ./scripts/check.sh
+        ./scripts/check.sh -f checkstyle > shellcheck-results.xml
 
-    - name: Check exit status
+    - name: Annotate ShellCheck Results
+      uses: reviewdog/action-shellcheck@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        reporter: github-pr-review
+        path: "."
+        pattern: "*.sh"
+        fail_on_error: true
+
+    - name: Upload ShellCheck Results
+      uses: actions/upload-artifact@v2
+      if: always()
+      with:
+        name: shellcheck-results
+        path: shellcheck-results.xml
+
+    - name: Check ShellCheck Results
       run: |
-        if [ $? -eq 0 ]; then
-          echo "All scripts passed shellcheck"
-        else
-          echo "Some scripts failed shellcheck"
+        if [ -s shellcheck-results.xml ]; then
+          echo "ShellCheck found issues"
           exit 1
+        else
+          echo "All scripts passed shellcheck"
         fi

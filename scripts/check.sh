@@ -6,10 +6,8 @@ run_shellcheck() {
     shift
 
     if [ $# -eq 0 ]; then
-        echo "Checking all .sh files in all subfolders"
         find . -type f -name "*.sh" -print0 | xargs -0 -I {} shellcheck ${output_format:+-f "$output_format"} {}
     else
-        echo "Checking specified files"
         shellcheck ${output_format:+-f "$output_format"} "$@"
     fi
 }
@@ -35,9 +33,7 @@ shift $((OPTIND -1))
 
 # Run shellcheck with the specified output format (if any)
 if run_shellcheck "$output_format" "$@"; then
-    echo "All scripts passed shellcheck"
     exit 0
 else
-    echo "Some scripts failed shellcheck"
     exit 1
 fi

@@ -25,7 +25,7 @@ jobs:
 
     - name: Run check.sh
       run: |
-        sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml
+        sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml || true
 
     - name: Annotate PR with Shellcheck results in checkstyle format
       uses: jwgmeligmeyling/checkstyle-github-action@master

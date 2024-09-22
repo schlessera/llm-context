@@ -25,14 +25,7 @@ jobs:
 
     - name: Run check.sh
       run: |
-        sh ./scripts/check.sh -f gcc | while IFS= read -r line; do
-          file=$(echo "$line" | cut -d':' -f1)
-          linenum=$(echo "$line" | cut -d':' -f2)
-          colnum=$(echo "$line" | cut -d':' -f3)
-          type=$(echo "$line" | cut -d':' -f4 | tr -d '[:space:]')
-          msg=$(echo "$line" | cut -d':' -f5-)
-          echo "::$type file=$file,line=$linenum,col=$colnum::$msg"
-        done
+        sh ./scripts/check.sh -- -f checkstyle
 
     - name: Check exit status
       run: |

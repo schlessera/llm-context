@@ -19,7 +19,7 @@ output_format=""
 while getopts "f:" opt; do
     case ${opt} in
         f )
-            output_format=$OPTARG
+            output_format="$OPTARG"
             ;;
         \? )
             echo "Invalid option: $OPTARG" 1>&2

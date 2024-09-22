@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# This script assembles the OWASP LLM Top 10 Risks document from individual markdown files.
+# It combines the content of 10 separate markdown files (llm01.md to llm10.md) into a single output file.
+# The script adds a main heading, a source reference, and a last updated timestamp to the final document.
+
 output_file="owasp-llm-top-10-risks.md"
 
 # Start with the main heading

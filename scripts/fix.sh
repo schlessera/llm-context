@@ -104,9 +104,6 @@ Please provide fixes for these issues, explaining each fix. Format your response
     # Process each suggestion and code block
     while IFS= read -r suggestion
     do
-        # Display the suggestion with its code block
-        echo "$suggestion" | sed 's/¬/\n/g' | glow -
-        
         # Extract the code block
         code_block=$(echo "$suggestion" | sed 's/¬/\n/g' | sed -n '/```bash/,/```/p' | sed '1d;$d')
         
@@ -118,12 +115,26 @@ Please provide fixes for these issues, explaining each fix. Format your response
         printf '%s\n' "$script_content" > "$temp_original"
         printf '%s\n' "$code_block" > "$temp_fixed"
         
-        # Generate and display the diff
-        echo "Diff for this suggestion:"
-        diff -u "$temp_original" "$temp_fixed" | sed '1,2d' | diff-so-fancy
+        # Generate the diff
+        diff_output=$(diff -u "$temp_original" "$temp_fixed" | sed '1,2d')
         
         # Clean up temporary files
         rm "$temp_original" "$temp_fixed"
+        
+        # Prepare the markdown output
+        markdown_output=$(cat <<EOF
+$(echo "$suggestion" | sed 's/¬/\n/g' | sed '/```bash/,/```/d')
+
+## Diff for this suggestion
+
+\`\`\`diff
+$diff_output
+\`\`\`
+EOF
+)
+
+        # Display the suggestion and diff using glow
+        echo "$markdown_output" | glow -
         
         # Ask user if they want to apply this fix
         while true; do

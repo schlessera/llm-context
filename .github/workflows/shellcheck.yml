@@ -20,7 +20,32 @@ jobs:
     - name: Install ShellCheck
       run: sudo apt-get install -y shellcheck
 
-    - name: Run check.sh
+    - name: Run ShellCheck
       run: |
-        chmod +x ./scripts/check.sh
-        ./scripts/check.sh
+        shopt -s globstar
+        for file in **/*.sh; do
+          if [ -f "$file" ]; then
+            output=$(shellcheck -f gcc "$file")
+            if [ -n "$output" ]; then
+              echo "::error file=$file::ShellCheck found issues:"
+              echo "$output" | while IFS= read -r line; do
+                file=$(echo "$line" | cut -d':' -f1)
+                linenum=$(echo "$line" | cut -d':' -f2)
+                colnum=$(echo "$line" | cut -d':' -f3)
+                type=$(echo "$line" | cut -d':' -f4 | tr -d '[:space:]')
+                msg=$(echo "$line" | cut -d':' -f5-)
+                echo "::$type file=$file,line=$linenum,col=$colnum::$msg"
+              done
+            fi
+          fi
+        done
+      shell: bash
+
+    - name: Check exit status
+      run: |
+        if [ $? -eq 0 ]; then
+          echo "All scripts passed shellcheck"
+        else
+          echo "Some scripts failed shellcheck"
+          exit 1
+        fi

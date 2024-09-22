@@ -11,11 +11,8 @@ run_shellcheck() {
     fi
 }
 
-# Run shellcheck with provided arguments or on all .sh files
-run_shellcheck "$@"
-
-# Check the exit status
-if [ $? -eq 0 ]; then
+# Check the result of run_shellcheck directly
+if run_shellcheck "$@"; then
     echo "All scripts passed shellcheck"
     exit 0
 else

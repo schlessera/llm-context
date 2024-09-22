@@ -2,9 +2,12 @@ name: ShellCheck
 
 on:
   push:
+    branches:
+      - main  # or your default branch name
     paths:
       - '**/*.sh'
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - '**/*.sh'
 

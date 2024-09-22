@@ -87,7 +87,7 @@ Here's the current content of the script:
 $script_content
 \`\`\`
 
-Please provide fixes for these issues, explaining each fix. Format your response as a series of suggestions in markdown, each starting with a new heading '## Suggestion: ' followed by the explanation in a separate paragraph and then the fixed code snippet. Output the fixed code snippet as a code block of type 'bash'. Ensure each suggestion is clearly separated. At the end, provide a complete fixed version of the script in a final 'bash' code block."
+Please provide fixes for these issues, explaining each fix. Format your response as a series of suggestions in markdown, each starting with a new heading '## Suggestion: ' followed by the explanation in a separate paragraph and then the fixed code snippet. Output the fixed code snippet as a code block of type 'bash'. Do not include any preceding text or paragraph before the code snippet. The full output will only contain one heading and one paragraph for each suggestion, as well as one code block with the code snippet, no other text. Ensure each suggestion is clearly separated."
 
     echo ""
 
@@ -101,24 +101,57 @@ Please provide fixes for these issues, explaining each fix. Format your response
         exit 1
     fi
     
-    echo "Claude's suggestions:"
-    printf '%s\n' "$claude_response" | glow -
-    
-    # Ask user if they want to apply the fixes
-    printf "Do you want to apply these fixes? (y/n): "
-    read -r apply_fixes
-    
-    if [ "$apply_fixes" = "y" ]; then
-        # Extract the final complete fixed script from Claude's response
-        fixed_content=$(printf '%s\n' "$claude_response" | sed -n '/```bash/,/```/p' | sed '1d;$d' | tail -n +1)
+    # Process each suggestion and code block
+    while IFS= read -r suggestion
+    do
+        # Display the suggestion with its code block
+        echo "$suggestion" | sed 's/¬/\n/g' | glow -
         
-        # Apply the fixes
-        printf '%s\n' "$fixed_content" > "$script"
-        echo "Fixes applied to $script"
-    else
-        echo "Fixes not applied."
-    fi
-    
+        # Extract the code block
+        code_block=$(echo "$suggestion" | sed 's/¬/\n/g' | sed -n '/```bash/,/```/p' | sed '1d;$d')
+        
+        # Create temporary files for diff
+        temp_original=$(mktemp)
+        temp_fixed=$(mktemp)
+        
+        # Write contents to temporary files
+        printf '%s\n' "$script_content" > "$temp_original"
+        printf '%s\n' "$code_block" > "$temp_fixed"
+        
+        # Generate and display the diff
+        echo "Diff for this suggestion:"
+        diff -u "$temp_original" "$temp_fixed" | sed '1,2d' | diff-so-fancy
+        
+        # Clean up temporary files
+        rm "$temp_original" "$temp_fixed"
+        
+        # Ask user if they want to apply this fix
+        while true; do
+            printf "Do you want to apply this fix? (y/n): "
+            read -r apply_fix < /dev/tty
+            case $apply_fix in
+                [Yy]* ) 
+                    # Apply the fix
+                    printf '%s\n' "$code_block" > "$script"
+                    echo "Fix applied to $script"
+                    # Update script_content for the next iteration
+                    script_content="$code_block"
+                    break
+                    ;;
+                [Nn]* ) 
+                    echo "Fix not applied."
+                    break
+                    ;;
+                * ) echo "Please answer y or n.";;
+            esac
+        done
+        
+        echo
+    done <<EOF
+$(echo "$claude_response" | awk '/^## Suggestion:/,/```$/' | sed -e '1h;1!H;$!d;x' -e 's/\n/¬/g' | sed 's/¬## Suggestion:/\n## Suggestion:/g')
+EOF
+
+    echo "All suggestions for $script processed."
     echo
 done
 

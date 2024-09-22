@@ -25,8 +25,7 @@ jobs:
 
     - name: Run check.sh
       run: |
-        chmod +x ./scripts/check.sh
-        ./scripts/check.sh -f checkstyle > shellcheck-results.xml
+        sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml
 
     - name: Annotate ShellCheck Results
       uses: reviewdog/action-shellcheck@v1
@@ -38,7 +37,7 @@ jobs:
         fail_on_error: true
 
     - name: Upload ShellCheck Results
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: shellcheck-results

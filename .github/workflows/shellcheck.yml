@@ -27,21 +27,10 @@ jobs:
       run: |
         sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml
 
-    - name: Annotate ShellCheck Results
-      uses: reviewdog/action-shellcheck@v1
+    - name: Annotate PR with Shellcheck results in checkstyle format
+      uses: jwgmeligmeyling/checkstyle-github-action@master
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        reporter: github-pr-review
-        path: "."
-        pattern: "*.sh"
-        fail_on_error: true
-
-    - name: Upload ShellCheck Results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: shellcheck-results
-        path: shellcheck-results.xml
+        path: '**/shellcheck-results.xml'
 
     - name: Check ShellCheck Results
       run: |

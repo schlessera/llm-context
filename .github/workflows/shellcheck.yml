@@ -27,7 +27,7 @@ jobs:
 
     - name: Run check.sh and store results
       run: |
-        sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml
+        sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml || true
 
     - uses: staabm/annotate-pull-request-from-checkstyle-action@v1
       with:

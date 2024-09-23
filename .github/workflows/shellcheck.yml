@@ -29,6 +29,10 @@ jobs:
       run: |
         sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml || true
 
+    - name: Debug shellcheck-results.xml
+      run: |
+        cat shellcheck-results.xml
+
     - name: Publish Checkstyle report
       uses: Juuxel/publish-checkstyle-report@v1
       with:

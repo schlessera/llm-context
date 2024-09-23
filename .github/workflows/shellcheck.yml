@@ -11,7 +11,11 @@ on:
     paths:
       - '**/*.sh'
 
-jobs:
+permissions:
+    actions: read # needed for actions/checkout
+    checks: write # needed for jwgmeligmeyling/checkstyle-github-action
+
+  jobs:
   shellcheck:
     name: Run ShellCheck
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
         sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml || true
 
     - name: Annotate PR with Shellcheck results in checkstyle format
-      uses: jwgmeligmeyling/checkstyle-github-action@master
+      uses: jwgmeligmeyling/checkstyle-github-action@v1.2
       with:
         path: '**/shellcheck-results.xml'
 

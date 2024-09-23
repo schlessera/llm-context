@@ -25,12 +25,6 @@ jobs:
     - name: Install ShellCheck
       run: sudo apt-get update && sudo apt-get install -y shellcheck
 
-    - name: Install cs2pr
-      run: |
-        curl -Ls https://github.com/reviewdog/cs2pr/releases/latest/download/cs2pr_linux_amd64.tar.gz | tar xz
-        sudo mv cs2pr /usr/local/bin/
-        cs2pr --version
-
     - name: Run check.sh and store results
       run: |
         sh ./scripts/check.sh -f checkstyle > shellcheck-results.xml

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# This script provides functions for interacting with the Claude API.
+# It includes a function to check if the API key is set and another to send requests to the API.
+# These functions are used by other scripts that need to communicate with Claude.
+
 # Check if CLAUDE_API_KEY is set
 check_api_key() {
     if [ -z "$CLAUDE_API_KEY" ]; then

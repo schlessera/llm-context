@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# This script updates the list of URLs for the OWASP LLM Top 10 Risks.
+# It downloads the main page, extracts the URLs for the 10 risk posts,
+# and saves them to scripts/urls.txt. The script ensures that exactly
+# 10 unique URLs are extracted and saved.
+
 # Download the HTML page
 if ! curl -s https://genai.owasp.org/llm-top-10/ > scripts/temp.html; then
     printf "Error: Failed to download the HTML page\n" >&2

@@ -2,9 +2,12 @@ name: ShellCheck
 
 on:
   push:
+    branches:
+      - main  # or your default branch name
     paths:
       - '**/*.sh'
   pull_request:
+    types: [opened, synchronize, reopened]
     paths:
       - '**/*.sh'
 
@@ -16,36 +19,27 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
 
     - name: Install ShellCheck
-      run: sudo apt-get install -y shellcheck
+      run: sudo apt-get update && sudo apt-get install -y shellcheck
 
-    - name: Run ShellCheck
+    - name: Run check.sh and store results
       run: |
-        shopt -s globstar
-        for file in **/*.sh; do
-          if [ -f "$file" ]; then
-            output=$(shellcheck -f gcc "$file")
-            if [ -n "$output" ]; then
-              echo "::error file=$file::ShellCheck found issues:"
-              echo "$output" | while IFS= read -r line; do
-                file=$(echo "$line" | cut -d':' -f1)
-                linenum=$(echo "$line" | cut -d':' -f2)
-                colnum=$(echo "$line" | cut -d':' -f3)
-                type=$(echo "$line" | cut -d':' -f4 | tr -d '[:space:]')
-                msg=$(echo "$line" | cut -d':' -f5-)
-                echo "::$type file=$file,line=$linenum,col=$colnum::$msg"
-              done
-            fi
-          fi
-        done
-      shell: bash
+        sh ./scripts/check.sh -f checkstyle | tr -d '\n' > shellcheck-results.xml
 
-    - name: Check exit status
+    - uses: staabm/annotate-pull-request-from-checkstyle-action@v1
+      with:
+        files: shellcheck-results.xml
+        notices-as-warnings: true
+
+    - name: Check ShellCheck Results
       run: |
-        if [ $? -eq 0 ]; then
-          echo "All scripts passed shellcheck"
-        else
-          echo "Some scripts failed shellcheck"
+        if [ -s shellcheck-results.xml ]; then
+          echo "ShellCheck found issues"
           exit 1
+        else
+          echo "All scripts passed shellcheck"
         fi
+

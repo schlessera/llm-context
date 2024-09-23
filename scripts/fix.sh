@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# This script automates the process of fixing shellcheck issues in shell scripts.
+# It uses the Claude API to generate suggestions for fixing shellcheck warnings and errors.
+# The script then applies these fixes interactively, allowing the user to review and approve each change.
+
 # Source the Claude API functions
 # shellcheck source=./claude_api.sh
 . "$(dirname "$0")/claude_api.sh"

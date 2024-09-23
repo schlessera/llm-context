@@ -1,5 +1,10 @@
 #!/bin/sh
 
+# This script scrapes content from URLs listed in scripts/urls.txt.
+# It fetches HTML content from each URL, converts it to markdown format,
+# and saves both HTML and markdown versions in the scripts/output directory.
+# The script also extracts and includes the post title in the markdown files.
+
 # Check if urls.txt exists
 if [ ! -f scripts/urls.txt ]; then
     printf "Error: scripts/urls.txt not found\n" >&2

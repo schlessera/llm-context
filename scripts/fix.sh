@@ -5,7 +5,6 @@
 # The script then applies these fixes interactively, allowing the user to review and approve each change.
 
 # Source the Claude API functions
-# shellcheck source=./claude_api.sh
 . "$(dirname "$0")/claude_api.sh"
 
 # Check if glow is installed

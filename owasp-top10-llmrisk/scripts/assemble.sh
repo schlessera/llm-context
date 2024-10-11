@@ -1,5 +1,12 @@
 #!/bin/sh
 
+# This script assembles the OWASP LLM Top 10 Risks document from individual markdown files.
+# It combines the content of 10 separate markdown files (llm01.md to llm10.md) into a single output file.
+# The script adds a main heading, a source reference, and a last updated timestamp to the final document.
+
+# Source the curl_with_retry helper function
+. "$(dirname "$0")/../../scripts/curl_with_retry.sh"
+
 output_file="owasp-llm-top-10-risks.md"
 
 # Start with the main heading
@@ -13,14 +20,16 @@ do
     input_file="scripts/output/llm${i}.md"
     
     if [ -f "$input_file" ]; then
-        printf "Processing %s\n" "$input_file"
+        printf "Processing %s... " "$input_file"
         
         # Add a newline before appending each file
         printf "\n" >> "$output_file"
         
         # Append the content of each file
-        if ! cat "$input_file" >> "$output_file"; then
-            printf "Error: Failed to append %s\n" "$input_file" >&2
+        if cat "$input_file" >> "$output_file"; then
+            printf "✅\n"
+        else
+            printf "❌\nError: Failed to append %s\n" "$input_file" >&2
             exit 1
         fi
     else

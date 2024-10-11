@@ -1,5 +1,13 @@
 #!/bin/sh
 
+# This script scrapes content from URLs listed in scripts/urls.txt.
+# It fetches HTML content from each URL, converts it to markdown format,
+# and saves both HTML and markdown versions in the scripts/output directory.
+# The script also extracts and includes the post title in the markdown files.
+
+# Source the curl_with_retry helper function
+. "$(dirname "$0")/../../scripts/curl_with_retry.sh"
+
 # Check if urls.txt exists
 if [ ! -f scripts/urls.txt ]; then
     printf "Error: scripts/urls.txt not found\n" >&2
@@ -17,11 +25,11 @@ do
     
     printf "Fetching %s and saving to %s ... " "$url" "$filename_html"
 
-    # Use curl to fetch the URL
-    if curl -s "$url" > "scripts/output/$filename_html"; then
-        printf "✅\n"
+    # Use curl_with_retry to fetch the URL
+    if curl_with_retry "$url" "scripts/output/$filename_html"; then
+        printf "\n"
     else
-        printf "❌\n" >&2
+        printf "\nFailed to fetch %s\n" "$url" >&2
         continue
     fi
 

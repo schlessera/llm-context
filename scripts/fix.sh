@@ -7,6 +7,9 @@
 # Source the Claude API functions
 . "$(dirname "$0")/claude_api.sh"
 
+# Source the prompt helper functions
+. "$(dirname "$0")/prompt_helper.sh"
+
 # Check if glow is installed
 if ! command -v glow >/dev/null 2>&1; then
     echo "Error: glow is not installed. Please install it to format the output."
@@ -44,29 +47,8 @@ for script in $scripts; do
     # Read the script content
     script_content=$(cat "$script")
     
-    # Prepare the prompt for Claude
-    prompt="I have a shell script with the following shellcheck issues:
-
-$shellcheck_output
-
-Here's the current content of the script:
-
-\`\`\`bash
-$script_content
-\`\`\`
-
-Please provide fixes for these issues, explaining each fix.
-Format your response as a series of suggestions in markdown, each starting with a new heading '## Suggestion: '
-followed by the explanation in a separate paragraph and then the fixed code snippet.
-Output the fixed code snippet as a code block of type 'patch'.
-The patch should be in the unified diff format, starting with '--- a/script' and '+++ b/script' headers,
-followed by one or more hunks. Each hunk should start with '@@ -line,count +line,count @@'.
-Ensure the patch can be applied to the original script without any offset.
-Do not include any preceding text or paragraph before the code snippet.
-The full output will only contain one heading and one paragraph for each suggestion, as well as
-one code block with the patch, no other text.
-Ensure each suggestion is clearly separated."
-
+    # Load and process the prompt
+    prompt=$(load_prompt "shellcheck_fix.md" "$shellcheck_output" "$script_content")
     echo ""
 
     # Send to Claude and get the response

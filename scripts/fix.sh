@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Source the Claude API functions
-# shellcheck source=./claude_api.sh
+# shellcheck source=scripts/claude_api.sh
 . "$(dirname "$0")/claude_api.sh"
 
 # Check if glow is installed
@@ -30,7 +30,7 @@ for script in $scripts; do
     printf "Checking %s ... " "$script"
     
     # Run shellcheck on the script and capture its output
-    shellcheck_output=$(shellcheck "$script" 2>&1)
+    shellcheck_output=$(shellcheck -x "$script" 2>&1)
     exit_code=$?
     
     if [ $exit_code -eq 0 ]; then

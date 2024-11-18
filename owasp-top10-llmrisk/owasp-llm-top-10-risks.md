@@ -1,7 +1,7 @@
 # OWASP LLM Top 10 Risks
 
 > Scraped from [https://genai.owasp.org/llm-top-10/](https://genai.owasp.org/llm-top-10/)
-> Last updated: Sun Sep 22 04:07:36 PM PDT 2024
+> Last updated: Mon Nov 18 02:17:31 PM CET 2024
 
 ## LLM01: Prompt Injection - OWASP Top 10 for LLM &amp; Generative AI Security
 

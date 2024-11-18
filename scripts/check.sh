@@ -4,10 +4,10 @@
 run_shellcheck() {
     if [ $# -eq 0 ]; then
         echo "Checking all .sh files in all subfolders"
-        find . -type f -name "*.sh" -print0 | xargs -0 -I {} shellcheck {}
+        find . -type f -name "*.sh" -print0 | xargs -0 -I {} shellcheck -x {}
     else
         echo "Checking specified files"
-        shellcheck "$@"
+        shellcheck -x "$@"
     fi
 }
 

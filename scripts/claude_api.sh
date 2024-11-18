@@ -2,8 +2,8 @@
 
 # Check if CLAUDE_API_KEY is set
 check_api_key() {
-    if [ -z "$CLAUDE_API_KEY" ]; then
-        echo "Error: CLAUDE_API_KEY environment variable is not set."
+    if [ -z "$ANTHROPIC_API_KEY" ]; then
+        echo "Error: ANTHROPIC_API_KEY environment variable is not set."
         exit 1
     fi
 }
@@ -15,7 +15,7 @@ send_to_claude() {
     escaped_prompt=$(printf '%s' "$prompt" | jq -Rsc .)
     response=$(curl -s https://api.anthropic.com/v1/messages \
         -H "Content-Type: application/json" \
-        -H "x-api-key: $CLAUDE_API_KEY" \
+        -H "x-api-key: $ANTHROPIC_API_KEY" \
         -H "anthropic-version: 2023-06-01" \
         -d "{
             \"model\": \"claude-3-5-sonnet-20240620\",
